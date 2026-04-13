@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
+
 import com.ganesh.ecommerce.model.Product;
 import com.ganesh.ecommerce.service.ProductService;
 
@@ -20,11 +22,7 @@ public class ProductController {
     }
 
     @PostMapping("/products")
-    public Product addProduct(@RequestBody Product product) {
+    public Product addProduct(@Valid @RequestBody Product product) {
         return productService.addProduct(product);
-    }
-    @GetMapping("/products/{id}")
-    public Product getProductById(@PathVariable int id) {
-        return productService.getProductById(id);
     }
 }
