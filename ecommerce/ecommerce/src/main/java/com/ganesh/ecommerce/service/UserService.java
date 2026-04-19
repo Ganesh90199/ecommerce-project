@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.ganesh.ecommerce.config.JwtUtil;
 import com.ganesh.ecommerce.model.User;
 import com.ganesh.ecommerce.repository.UserRepository;
 
@@ -27,17 +26,12 @@ public class UserService {
     }
 
     // 🔐 Login User
-    @Autowired
-    private JwtUtil jwtUtil;
-
     public String login(String email, String password) {
 
         User user = userRepository.findByEmail(email);
 
         if (user != null && passwordEncoder.matches(password, user.getPassword())) {
-
-            // 🔥 Return JWT token instead of message
-            return jwtUtil.generateToken(email);
+            return "Login successful";
         }
 
         return "Invalid credentials";
