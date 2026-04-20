@@ -1,28 +1,23 @@
 package com.ganesh.ecommerce.controller;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.validation.Valid;
-
-import com.ganesh.ecommerce.model.Product;
-import com.ganesh.ecommerce.service.ProductService;
-
 @RestController
+@RequestMapping("/api/products")
 public class ProductController {
 
-    @Autowired
-    private ProductService productService;
-
-    @GetMapping("/products")
-    public List<Product> getProducts() {
-        return productService.getAllProducts();
+    @PostMapping("/admin/add")
+    public String addProduct() {
+        return "Product Added";
     }
 
-    @PostMapping("/products")
-    public Product addProduct(@Valid @RequestBody Product product) {
-        return productService.addProduct(product);
+    @DeleteMapping("/admin/delete/{id}")
+    public String deleteProduct(@PathVariable int id) {
+        return "Deleted product " + id;
+    }
+
+    @GetMapping("/all")
+    public String getAll() {
+        return "All products";
     }
 }

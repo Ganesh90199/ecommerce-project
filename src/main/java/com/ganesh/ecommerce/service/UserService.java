@@ -1,7 +1,8 @@
 package com.ganesh.ecommerce.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.ganesh.ecommerce.config.JwtUtil;
@@ -15,31 +16,40 @@ public class UserService {
     private UserRepository userRepository;
 
     @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
-
-    // 🔐 Register User
-    public User register(User user) {
-
-        // Encrypt password before saving
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-        return userRepository.save(user);
-    }
-
-    // 🔐 Login User
-    @Autowired
     private JwtUtil jwtUtil;
 
-    public String login(String email, String password) {
+    // ✅ REGISTER (update if exists)
+    public String register(User user) {
 
-        User user = userRepository.findByEmail(email);
+        List<User> users = userRepository.findByEmail(user.getEmail());
 
-        if (user != null && passwordEncoder.matches(password, user.getPassword())) {
-
-            // 🔥 Return JWT token instead of message
-            return jwtUtil.generateToken(email);
+        if (!users.isEmpty()) {
+            User existing = users.get(0);
+            existing.setPassword(user.getPassword());
+            existing.setRole(user.getRole());
+            userRepository.save(existing);
+            return "User updated";
         }
 
-        return "Invalid credentials";
+        userRepository.save(user);
+        return "User registered";
+    }
+
+    // ✅ LOGIN
+    public String login(User user) {
+
+        List<User> users = userRepository.findByEmail(user.getEmail());
+
+        if (users.isEmpty()) {
+            return "User not found";
+        }
+
+        for (User u : users) {
+            if (u.getPassword().equals(user.getPassword())) {
+                return jwtUtil.generateToken(u.getEmail(), u.getRole());
+            }
+        }
+
+        return "Invalid password";
     }
 }
