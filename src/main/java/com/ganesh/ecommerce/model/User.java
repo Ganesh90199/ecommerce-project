@@ -1,17 +1,23 @@
 package com.ganesh.ecommerce.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "users")
 public class User {
 
+	
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @NotBlank
     private String email;
+
+    @NotBlank
     private String password;
+    
     private String role;
 
     // getters & setters

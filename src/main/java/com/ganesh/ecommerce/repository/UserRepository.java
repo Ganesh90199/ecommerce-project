@@ -6,5 +6,5 @@ import com.ganesh.ecommerce.model.User;
 
 public interface UserRepository extends JpaRepository<User, Integer> {
 
-    List<User> findByEmail(String email);   // IMPORTANT → List (not single)
+    List<User> findByEmail(String email);
 }

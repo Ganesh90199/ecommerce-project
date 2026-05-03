@@ -10,42 +10,48 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    // ✅ 256-bit secure key (VERY IMPORTANT)
+    // ✅ Strong key (>=256 bits)
     private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
+    // 🔥 Generate token with role
     public String generateToken(String email, String role) {
         return Jwts.builder()
                 .setSubject(email)
                 .claim("role", role)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
-                .signWith(key) // ✅ correct way
+                .signWith(key)
                 .compact();
     }
 
-    public Claims extractClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-    }
-
-    public String extractEmail(String token) {
-        return extractClaims(token).getSubject();
-    }
-
-    public String extractRole(String token) {
-        return extractClaims(token).get("role", String.class);
-    }
-
+    // ✅ Validate token
     public boolean validateToken(String token) {
         try {
-            extractClaims(token);
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
         } catch (Exception e) {
             System.out.println("JWT ERROR: " + e.getMessage());
             return false;
         }
+    }
+
+    // ✅ Extract email
+    public String extractEmail(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
+    }
+
+    // ✅ Extract role
+    public String extractRole(String token) {
+        return (String) Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("role");
     }
 }
