@@ -1,7 +1,5 @@
 package com.ganesh.ecommerce.service;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,37 +20,29 @@ public class UserService {
     @Autowired
     private JwtUtil jwtUtil;
 
-    // ✅ REGISTER (Create or Update Password if email exists)
+    // ✅ REGISTER
     public String register(User user) {
 
-        List<User> existingUsers = userRepository.findByEmail(user.getEmail());
-
-        if (!existingUsers.isEmpty()) {
-            User existing = existingUsers.get(0);
-            existing.setPassword(passwordEncoder.encode(user.getPassword()));
-            userRepository.save(existing);
-            return "Password Updated";
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+            return "User already exists";
         }
 
-        // ✅ Always USER
-        user.setRole("USER");
-
+        user.setRole("USER"); // default role
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+
         userRepository.save(user);
 
         return "User Registered";
     }
-    
-    //ADMIN CREATION
+
+    // ✅ CREATE ADMIN
     public String createAdmin(User user) {
 
-        List<User> existingUsers = userRepository.findByEmail(user.getEmail());
-
-        if (!existingUsers.isEmpty()) {
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             return "User already exists";
         }
 
-        user.setRole("ADMIN");  // ✅ Only here ADMIN is assigned
+        user.setRole("ADMIN");
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         userRepository.save(user);
@@ -60,24 +50,23 @@ public class UserService {
         return "Admin Created";
     }
 
-    // ✅ LOGIN (Validate password + Generate JWT token)
-    public String login(User user) {
+    // ✅ LOGIN (returns User, NOT String)
+    public User loginUser(User request) {
 
-        List<User> users = userRepository.findByEmail(user.getEmail());
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElse(null);
 
-        if (users.isEmpty()) {
-            return "User not found";
+        if (user == null) return null;
+
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            return null;
         }
 
-        User u = users.get(0);
+        return user;
+    }
 
-        // 🔐 Compare encrypted password
-        if (passwordEncoder.matches(user.getPassword(), u.getPassword())) {
-
-            // ✅ Generate JWT with email + role
-            return jwtUtil.generateToken(u.getEmail(), u.getRole());
-        }
-
-        return "Invalid password";
+    // ✅ GENERATE TOKEN
+    public String generateToken(String email, String role) {
+        return jwtUtil.generateToken(email, role);
     }
 }

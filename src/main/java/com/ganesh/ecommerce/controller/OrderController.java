@@ -27,15 +27,18 @@ public class OrderController {
     @Autowired
     private UserRepository userRepository;
 
-    // ✅ Place Order (userId from token)
     @PostMapping
-    public ResponseEntity<?> placeOrder(@RequestBody Order order, HttpServletRequest request) {
+    public ResponseEntity<?> placeOrder(
+            @RequestBody Order order,
+            HttpServletRequest request) {
 
         String header = request.getHeader("Authorization");
         String token = header.substring(7);
 
         String email = jwtUtil.extractEmail(token);
-        User user = userRepository.findByEmail(email).get(0);
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         order.setUserId(user.getId());
 
@@ -44,7 +47,6 @@ public class OrderController {
         return ResponseEntity.ok(savedOrder);
     }
 
-    // ✅ Get logged-in user's orders ONLY
     @GetMapping("/my")
     public ResponseEntity<?> getMyOrders(HttpServletRequest request) {
 
@@ -52,7 +54,9 @@ public class OrderController {
         String token = header.substring(7);
 
         String email = jwtUtil.extractEmail(token);
-        User user = userRepository.findByEmail(email).get(0);
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         List<Order> orders = orderService.getOrdersByUser(user.getId());
 

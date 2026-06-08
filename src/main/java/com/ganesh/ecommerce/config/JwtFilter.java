@@ -2,17 +2,23 @@ package com.ganesh.ecommerce.config;
 
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.io.IOException;
+import java.util.List;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
-    @Autowired
-    private JwtUtil jwtUtil;
+    private final JwtUtil jwtUtil;
+
+    public JwtFilter(JwtUtil jwtUtil) {
+        this.jwtUtil = jwtUtil;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -20,52 +26,29 @@ public class JwtFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        String path = request.getRequestURI();
-        System.out.println("PATH -> " + path);
-
-        // ✅ Skip auth APIs
-        if (path.startsWith("/api/auth")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
         String header = request.getHeader("Authorization");
 
-        if (header == null || !header.startsWith("Bearer ")) {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            response.getWriter().write("Missing Token");
-            return;
-        }
+        if (header != null && header.startsWith("Bearer ")) {
 
-        String token = header.substring(7).trim();
+            String token = header.substring(7);
 
-        // ✅ Validate token
-        if (!jwtUtil.validateToken(token)) {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            response.getWriter().write("Invalid Token");
-            return;
-        }
+            if (jwtUtil.validateToken(token)) {
 
-        String role = jwtUtil.extractRole(token);
-        System.out.println("ROLE -> " + role);
+            	String email = jwtUtil.extractEmail(token);
+            	String role = jwtUtil.extractRole(token);
 
-        if (path.startsWith("/api/products/admin")) {
+            	System.out.println("EMAIL -> " + email);
+            	System.out.println("ROLE FROM TOKEN -> " + role);
 
-            if (role == null || !role.equals("ADMIN")) {
-                response.setStatus(403);
-                response.getWriter().write("Admin only");
-                return;
+                // 🔥 IMPORTANT: ROLE_ prefix
+                var authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
+
+                UsernamePasswordAuthenticationToken auth =
+                        new UsernamePasswordAuthenticationToken(email, null, authorities);
+
+                SecurityContextHolder.getContext().setAuthentication(auth);
             }
         }
-        
-//        // 🔥 ADMIN ONLY APIs
-//        if ((path.startsWith("/api/products/admin") || path.startsWith("/api/admin"))
-//                && !"ADMIN".equals(role)) {
-//
-//            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-//            response.getWriter().write("Admin only");
-//            return;
-//        }
 
         filterChain.doFilter(request, response);
     }

@@ -11,33 +11,42 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
+@CrossOrigin(origins = "http://localhost:3000")
 public class UserController {
 
     @Autowired
     private UserService userService;
 
-    // ✅ Register
+    // ✅ REGISTER
     @PostMapping("/auth/register")
     public ResponseEntity<?> register(@RequestBody User user) {
         String msg = userService.register(user);
         return ResponseEntity.ok(Map.of("message", msg));
     }
 
-    // ✅ Login
+    // ✅ LOGIN (FIXED)
     @PostMapping("/auth/login")
     public ResponseEntity<?> login(@RequestBody User user) {
-        String result = userService.login(user);
 
-        // ❌ Handle errors
-        if (result.equals("User not found") || result.equals("Invalid password")) {
-            return ResponseEntity.status(401).body(Map.of("error", result));
+        User loggedInUser = userService.loginUser(user);
+
+        if (loggedInUser == null) {
+            return ResponseEntity.status(401)
+                    .body(Map.of("error", "Invalid credentials"));
         }
 
-        // ✅ Success → return token
-        return ResponseEntity.ok(Map.of("token", result));
+        String token = userService.generateToken(
+                loggedInUser.getEmail(),
+                loggedInUser.getRole()
+        );
+
+        return ResponseEntity.ok(Map.of(
+                "token", token,
+                "role", loggedInUser.getRole()   // 🔥 VERY IMPORTANT
+        ));
     }
 
-    // 🔥 Admin creates admin (optional)
+    // ✅ ADMIN CREATE
     @PostMapping("/admin/create-admin")
     public ResponseEntity<?> createAdmin(@RequestBody User user) {
         String msg = userService.createAdmin(user);
