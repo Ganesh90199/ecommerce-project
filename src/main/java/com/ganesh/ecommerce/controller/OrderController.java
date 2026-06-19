@@ -1,6 +1,7 @@
 package com.ganesh.ecommerce.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import com.ganesh.ecommerce.dto.DashboardResponseDTO;
 import com.ganesh.ecommerce.dto.OrderResponseDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +12,7 @@ import com.ganesh.ecommerce.model.Order;
 import com.ganesh.ecommerce.model.User;
 import com.ganesh.ecommerce.repository.UserRepository;
 import com.ganesh.ecommerce.service.OrderService;
-
+import com.ganesh.ecommerce.dto.OrderStatusCountDTO;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
@@ -123,6 +124,24 @@ public class OrderController {
                         id,
                         body.get("status")
                 )
+        );
+    }
+    @GetMapping("/admin/dashboard")
+    public ResponseEntity<DashboardResponseDTO>
+            getDashboard() {
+
+        return ResponseEntity.ok(
+                orderService.getDashboardData()
+        );
+    }
+    @GetMapping("/admin/order-status")
+    public ResponseEntity<
+            List<OrderStatusCountDTO>>
+            getOrderStatusCounts() {
+
+        return ResponseEntity.ok(
+                orderService
+                .getOrderStatusCounts()
         );
     }
 }

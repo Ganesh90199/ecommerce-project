@@ -1,16 +1,15 @@
 package com.ganesh.ecommerce.service;
 
 import java.time.LocalDateTime;
+import com.ganesh.ecommerce.dto.DashboardResponseDTO;
 import java.util.ArrayList;
-
-import com.ganesh.ecommerce.dto.OrderResponseDTO;
-import com.ganesh.ecommerce.dto.OrderItemDTO;
-
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ganesh.ecommerce.dto.OrderItemDTO;
+import com.ganesh.ecommerce.dto.OrderResponseDTO;
 import com.ganesh.ecommerce.model.Cart;
 import com.ganesh.ecommerce.model.Order;
 import com.ganesh.ecommerce.model.OrderItem;
@@ -19,6 +18,8 @@ import com.ganesh.ecommerce.repository.CartRepository;
 import com.ganesh.ecommerce.repository.OrderItemRepository;
 import com.ganesh.ecommerce.repository.OrderRepository;
 import com.ganesh.ecommerce.repository.ProductRepository;
+import com.ganesh.ecommerce.repository.UserRepository;
+import com.ganesh.ecommerce.dto.OrderStatusCountDTO;
 
 @Service
 public class OrderService {
@@ -34,6 +35,9 @@ public class OrderService {
 
     @Autowired
     private ProductRepository productRepository;
+    
+    @Autowired
+    private UserRepository userRepository;
 
     public Order placeOrder(Order order) {
 
@@ -260,4 +264,45 @@ public class OrderService {
 
         return orderRepository.save(order);
     }
+    public DashboardResponseDTO getDashboardData() {
+
+        DashboardResponseDTO dto =
+                new DashboardResponseDTO();
+
+        dto.setTotalProducts(
+                productRepository.count()
+        );
+
+        dto.setTotalOrders(
+                orderRepository.count()
+        );
+
+        dto.setTotalUsers(
+                userRepository.count()
+        );
+
+        dto.setTotalRevenue(
+                orderRepository.getTotalRevenue()
+        );
+        dto.setLowStockProducts(
+                productRepository.countByQuantityBetween(
+                        1,
+                        10
+                )
+        );
+
+        dto.setOutOfStockProducts(
+                productRepository.countByQuantity(
+                        0
+                )
+        );
+
+        return dto;
+    }
+    public List<OrderStatusCountDTO>
+    getOrderStatusCounts() {
+
+return orderRepository
+        .getOrderStatusCounts();
+}
     }
