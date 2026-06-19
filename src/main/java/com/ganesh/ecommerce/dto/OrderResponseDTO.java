@@ -1,25 +1,46 @@
-package com.ganesh.ecommerce.model;
+package com.ganesh.ecommerce.dto;
 
-import jakarta.persistence.*;
+import java.util.List;
 
-@Entity
-@Table(name = "orders")
-public class Order {
+public class OrderResponseDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
-    private int userId;
     private double totalAmount;
     private String status;
     private String orderDate;
-
+    
     private String customerName;
     private String mobile;
     private String address;
     private String city;
     private String pincode;
+
+    private List<OrderItemDTO> items;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public double getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(double totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     public String getOrderDate() {
         return orderDate;
     }
@@ -27,7 +48,14 @@ public class Order {
     public void setOrderDate(String orderDate) {
         this.orderDate = orderDate;
     }
-    
+
+    public List<OrderItemDTO> getItems() {
+        return items;
+    }
+
+    public void setItems(List<OrderItemDTO> items) {
+        this.items = items;
+    }
     public String getCustomerName() {
         return customerName;
     }
@@ -66,33 +94,5 @@ public class Order {
 
     public void setPincode(String pincode) {
         this.pincode = pincode;
-    }
-    
-    public int getId() {
-        return id;
-    }
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
-
-    public double getTotalAmount() {
-        return totalAmount;
-    }
-
-    public void setTotalAmount(double totalAmount) {
-        this.totalAmount = totalAmount;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 }

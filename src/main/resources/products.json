@@ -1,0 +1,22 @@
+[
+  {
+    "name": "Apple iPhone 15",
+    "price": 79999,
+    "description": "Apple iPhone 15 128GB Blue",
+    "category": "Mobiles",
+    "brand": "Apple",
+    "rating": 4.8,
+    "quantity": 50,
+    "imageUrl": "https://example.com/iphone15.jpg"
+  },
+  {
+    "name": "Samsung Galaxy S24",
+    "price": 74999,
+    "description": "Samsung Galaxy S24 256GB",
+    "category": "Mobiles",
+    "brand": "Samsung",
+    "rating": 4.7,
+    "quantity": 40,
+    "imageUrl": "https://example.com/galaxys24.jpg"
+  }
+]

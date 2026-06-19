@@ -1,12 +1,24 @@
 package com.ganesh.ecommerce.service;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+
+import com.ganesh.ecommerce.dto.OrderResponseDTO;
+import com.ganesh.ecommerce.dto.OrderItemDTO;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ganesh.ecommerce.model.Cart;
 import com.ganesh.ecommerce.model.Order;
+import com.ganesh.ecommerce.model.OrderItem;
+import com.ganesh.ecommerce.model.Product;
+import com.ganesh.ecommerce.repository.CartRepository;
+import com.ganesh.ecommerce.repository.OrderItemRepository;
 import com.ganesh.ecommerce.repository.OrderRepository;
-
-import java.util.List;
+import com.ganesh.ecommerce.repository.ProductRepository;
 
 @Service
 public class OrderService {
@@ -14,27 +26,238 @@ public class OrderService {
     @Autowired
     private OrderRepository orderRepository;
 
+    @Autowired
+    private OrderItemRepository orderItemRepository;
+
+    @Autowired
+    private CartRepository cartRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
+
     public Order placeOrder(Order order) {
 
-        // ✅ Validate input (PREVENT 500 ERROR)
-        if (order == null) {
-            throw new RuntimeException("Order is null");
-        }
-
-        if (order.getUserId() == 0) {
-            throw new RuntimeException("UserId is required");
-        }
-
-        if (order.getTotalAmount() <= 0) {
-            throw new RuntimeException("Invalid amount");
-        }
-
         order.setStatus("PLACED");
+        order.setOrderDate(
+                LocalDateTime.now().toString()
+        );
+
+        Order savedOrder =
+                orderRepository.save(order);
+
+        List<Cart> cartItems =
+                cartRepository.findByUserId(
+                        order.getUserId()
+                );
+
+        double totalAmount = 0;
+
+        for (Cart cart : cartItems) {
+
+            Product product =
+                    productRepository.findById(
+                            cart.getProductId()
+                    ).orElseThrow(
+                            () -> new RuntimeException(
+                                    "Product not found"
+                            )
+                    );
+
+            if (
+                product.getQuantity()
+                < cart.getQuantity()
+            ) {
+                throw new RuntimeException(
+                        product.getName()
+                        + " is out of stock"
+                );
+            }
+
+            OrderItem item =
+                    new OrderItem();
+
+            item.setOrderId(
+                    savedOrder.getId()
+            );
+            item.setProductId(
+                    product.getId()
+            );
+
+            item.setProductName(
+                    product.getName()
+            );
+
+            item.setQuantity(
+                    cart.getQuantity()
+            );
+
+            item.setPrice(
+                    product.getPrice()
+            );
+
+            orderItemRepository.save(item);
+
+            product.setQuantity(
+                    product.getQuantity()
+                    - cart.getQuantity()
+            );
+
+            productRepository.save(product);
+
+            totalAmount +=
+                    product.getPrice()
+                    * cart.getQuantity();
+        }
+
+        savedOrder.setTotalAmount(
+                totalAmount
+        );
+
+        savedOrder =
+                orderRepository.save(savedOrder);
+
+        cartRepository.deleteAll(
+                cartItems
+        );
+
+        return savedOrder;
+    }
+
+    public List<OrderResponseDTO> getOrdersByUser(
+            int userId) {
+
+        List<Order> orders =
+                orderRepository.findByUserId(
+                        userId
+                );
+
+        List<OrderResponseDTO> response =
+                new ArrayList<>();
+
+        for (Order order : orders) {
+
+            OrderResponseDTO dto =
+                    new OrderResponseDTO();
+
+            dto.setId(
+                    order.getId()
+            );
+
+            dto.setStatus(
+                    order.getStatus()
+            );
+
+            dto.setTotalAmount(
+                    order.getTotalAmount()
+            );
+
+            dto.setOrderDate(
+                    order.getOrderDate()
+            );
+            
+            dto.setCustomerName(
+                    order.getCustomerName()
+            );
+
+            dto.setMobile(
+                    order.getMobile()
+            );
+
+            dto.setAddress(
+                    order.getAddress()
+            );
+
+            dto.setCity(
+                    order.getCity()
+            );
+
+            dto.setPincode(
+                    order.getPincode()
+            );
+
+            List<OrderItem> orderItems =
+                    orderItemRepository.findByOrderId(
+                            order.getId()
+                    );
+
+            List<OrderItemDTO> itemDtos =
+                    new ArrayList<>();
+
+            for (OrderItem item : orderItems) {
+
+                OrderItemDTO itemDto =
+                        new OrderItemDTO();
+
+                itemDto.setProductName(
+                        item.getProductName()
+                );
+
+                itemDto.setQuantity(
+                        item.getQuantity()
+                );
+
+                itemDto.setPrice(
+                        item.getPrice()
+                );
+
+                itemDtos.add(
+                        itemDto
+                );
+            }
+
+            dto.setItems(
+                    itemDtos
+            );
+
+            response.add(
+                    dto
+            );
+        }
+
+        return response;
+    }
+    public Order cancelOrder(int orderId) {
+
+        Order order =
+                orderRepository.findById(orderId)
+                .orElseThrow(
+                    () -> new RuntimeException(
+                        "Order not found"
+                    )
+                );
+
+        if(
+            order.getStatus().equals("DELIVERED")
+        ) {
+
+            throw new RuntimeException(
+                "Delivered order cannot be cancelled"
+            );
+        }
+
+        order.setStatus("CANCELLED");
 
         return orderRepository.save(order);
     }
+    public List<Order> getAllOrders() {
 
-    public List<Order> getOrdersByUser(int userId) {
-        return orderRepository.findByUserId(userId);
+        return orderRepository.findAll();
     }
-}
+
+    public Order updateOrderStatus(
+            int orderId,
+            String status) {
+
+        Order order =
+                orderRepository.findById(orderId)
+                .orElseThrow(
+                    () -> new RuntimeException(
+                        "Order not found"
+                    )
+                );
+
+        order.setStatus(status);
+
+        return orderRepository.save(order);
+    }
+    }

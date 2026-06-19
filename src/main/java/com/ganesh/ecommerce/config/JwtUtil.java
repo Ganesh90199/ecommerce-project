@@ -11,8 +11,11 @@ import java.util.Date;
 public class JwtUtil {
 
     // ✅ Strong key (>=256 bits)
-    private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+	private static final String SECRET =
+	        "GaneshEcommerceApplicationJWTSecretKeyFor2026Project123456";
 
+	private final Key key =
+	        Keys.hmacShaKeyFor(SECRET.getBytes());
     // 🔥 Generate token with role
     public String generateToken(String email, String role) {
         return Jwts.builder()
