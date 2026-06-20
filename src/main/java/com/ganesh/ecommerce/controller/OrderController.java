@@ -34,6 +34,7 @@ public class OrderController {
     public ResponseEntity<?> placeOrder(
             @RequestBody PlaceOrderRequest requestBody,
             HttpServletRequest request) {
+    	System.out.println("ORDER API HIT");
 
         String header = request.getHeader("Authorization");
         String token = header.substring(7);

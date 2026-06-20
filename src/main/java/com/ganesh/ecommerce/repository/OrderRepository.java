@@ -11,8 +11,7 @@ import com.ganesh.ecommerce.model.Order;
 public interface OrderRepository
         extends JpaRepository<Order, Integer> {
 
-    List<Order> findByUserId(int userId);
-
+	List<Order> findByUserIdOrderByIdDesc(int userId);
     @Query(
         "SELECT COALESCE(SUM(o.totalAmount),0) " +
         "FROM Order o " +

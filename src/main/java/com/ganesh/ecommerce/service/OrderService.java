@@ -1,15 +1,16 @@
 package com.ganesh.ecommerce.service;
 
 import java.time.LocalDateTime;
-import com.ganesh.ecommerce.dto.DashboardResponseDTO;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ganesh.ecommerce.dto.DashboardResponseDTO;
 import com.ganesh.ecommerce.dto.OrderItemDTO;
 import com.ganesh.ecommerce.dto.OrderResponseDTO;
+import com.ganesh.ecommerce.dto.OrderStatusCountDTO;
 import com.ganesh.ecommerce.model.Cart;
 import com.ganesh.ecommerce.model.Order;
 import com.ganesh.ecommerce.model.OrderItem;
@@ -19,7 +20,6 @@ import com.ganesh.ecommerce.repository.OrderItemRepository;
 import com.ganesh.ecommerce.repository.OrderRepository;
 import com.ganesh.ecommerce.repository.ProductRepository;
 import com.ganesh.ecommerce.repository.UserRepository;
-import com.ganesh.ecommerce.dto.OrderStatusCountDTO;
 
 @Service
 public class OrderService {
@@ -35,7 +35,7 @@ public class OrderService {
 
     @Autowired
     private ProductRepository productRepository;
-    
+
     @Autowired
     private UserRepository userRepository;
 
@@ -58,22 +58,29 @@ public class OrderService {
 
         for (Cart cart : cartItems) {
 
-            Product product =
-                    productRepository.findById(
-                            cart.getProductId()
-                    ).orElseThrow(
-                            () -> new RuntimeException(
-                                    "Product not found"
-                            )
-                    );
+        	System.out.println(
+        	        "Cart Product ID = "
+        	        + cart.getProductId()
+        	);
 
+        	Product product =
+        		    productRepository.findById(
+        		        cart.getProductId()
+        		    ).orElse(null);
+
+        		if(product == null){
+
+        		    cartRepository.delete(cart);
+
+        		    continue;
+        		}
             if (
-                product.getQuantity()
-                < cart.getQuantity()
+                    product.getQuantity()
+                    < cart.getQuantity()
             ) {
                 throw new RuntimeException(
                         product.getName()
-                        + " is out of stock"
+                                + " is out of stock"
                 );
             }
 
@@ -83,6 +90,7 @@ public class OrderService {
             item.setOrderId(
                     savedOrder.getId()
             );
+
             item.setProductId(
                     product.getId()
             );
@@ -103,14 +111,14 @@ public class OrderService {
 
             product.setQuantity(
                     product.getQuantity()
-                    - cart.getQuantity()
+                            - cart.getQuantity()
             );
 
             productRepository.save(product);
 
             totalAmount +=
                     product.getPrice()
-                    * cart.getQuantity();
+                            * cart.getQuantity();
         }
 
         savedOrder.setTotalAmount(
@@ -131,7 +139,7 @@ public class OrderService {
             int userId) {
 
         List<Order> orders =
-                orderRepository.findByUserId(
+                orderRepository.findByUserIdOrderByIdDesc(
                         userId
                 );
 
@@ -143,22 +151,11 @@ public class OrderService {
             OrderResponseDTO dto =
                     new OrderResponseDTO();
 
-            dto.setId(
-                    order.getId()
-            );
+            dto.setId(order.getId());
+            dto.setStatus(order.getStatus());
+            dto.setTotalAmount(order.getTotalAmount());
+            dto.setOrderDate(order.getOrderDate());
 
-            dto.setStatus(
-                    order.getStatus()
-            );
-
-            dto.setTotalAmount(
-                    order.getTotalAmount()
-            );
-
-            dto.setOrderDate(
-                    order.getOrderDate()
-            );
-            
             dto.setCustomerName(
                     order.getCustomerName()
             );
@@ -204,38 +201,36 @@ public class OrderService {
                         item.getPrice()
                 );
 
-                itemDtos.add(
-                        itemDto
-                );
+                itemDtos.add(itemDto);
             }
 
-            dto.setItems(
-                    itemDtos
-            );
+            dto.setItems(itemDtos);
 
-            response.add(
-                    dto
-            );
+            response.add(dto);
         }
 
         return response;
     }
-    public Order cancelOrder(int orderId) {
+
+    public Order cancelOrder(
+            int orderId
+    ) {
 
         Order order =
                 orderRepository.findById(orderId)
-                .orElseThrow(
-                    () -> new RuntimeException(
-                        "Order not found"
-                    )
-                );
+                        .orElseThrow(
+                                () -> new RuntimeException(
+                                        "Order not found"
+                                )
+                        );
 
-        if(
-            order.getStatus().equals("DELIVERED")
+        if (
+                order.getStatus()
+                        .equals("DELIVERED")
         ) {
 
             throw new RuntimeException(
-                "Delivered order cannot be cancelled"
+                    "Delivered order cannot be cancelled"
             );
         }
 
@@ -243,6 +238,7 @@ public class OrderService {
 
         return orderRepository.save(order);
     }
+
     public List<Order> getAllOrders() {
 
         return orderRepository.findAll();
@@ -250,20 +246,22 @@ public class OrderService {
 
     public Order updateOrderStatus(
             int orderId,
-            String status) {
+            String status
+    ) {
 
         Order order =
                 orderRepository.findById(orderId)
-                .orElseThrow(
-                    () -> new RuntimeException(
-                        "Order not found"
-                    )
-                );
+                        .orElseThrow(
+                                () -> new RuntimeException(
+                                        "Order not found"
+                                )
+                        );
 
         order.setStatus(status);
 
         return orderRepository.save(order);
     }
+
     public DashboardResponseDTO getDashboardData() {
 
         DashboardResponseDTO dto =
@@ -284,6 +282,7 @@ public class OrderService {
         dto.setTotalRevenue(
                 orderRepository.getTotalRevenue()
         );
+
         dto.setLowStockProducts(
                 productRepository.countByQuantityBetween(
                         1,
@@ -299,10 +298,11 @@ public class OrderService {
 
         return dto;
     }
+
     public List<OrderStatusCountDTO>
     getOrderStatusCounts() {
 
-return orderRepository
-        .getOrderStatusCounts();
+        return orderRepository
+				.getOrderStatusCounts();
+	}
 }
-    }
