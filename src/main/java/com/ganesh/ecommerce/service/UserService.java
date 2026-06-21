@@ -22,6 +22,9 @@ public class UserService {
 
     // ✅ REGISTER
     public String register(User user) {
+    	if(userRepository.findByEmail(user.getEmail()).isPresent()) {
+    	    throw new RuntimeException("User already exists");
+    	}
 
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             return "User already exists";

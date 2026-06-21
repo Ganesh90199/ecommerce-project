@@ -10,6 +10,10 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    
+    @NotBlank
+    @Column(nullable = false)
+    private String name;
 
     @NotBlank
     @Column(nullable = false, unique = true)
@@ -33,6 +37,14 @@ public class User {
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+    
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
 }

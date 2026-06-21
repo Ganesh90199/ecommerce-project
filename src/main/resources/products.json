@@ -1,22 +1,481 @@
+
+
 [
   {
     "name": "Apple iPhone 15",
-    "price": 79999,
-    "description": "Apple iPhone 15 128GB Blue",
-    "category": "Mobiles",
     "brand": "Apple",
+    "category": "Mobiles",
+    "price": 79999,
+    "quantity": 20,
     "rating": 4.8,
-    "quantity": 50,
-    "imageUrl": "https://example.com/iphone15.jpg"
+    "description": "Apple iPhone 15 128GB smartphone with A16 Bionic chip.",
+    "imageUrl": "https://images.unsplash.com/photo-1695048133142-1a20484d2569"
   },
   {
     "name": "Samsung Galaxy S24",
-    "price": 74999,
-    "description": "Samsung Galaxy S24 256GB",
-    "category": "Mobiles",
     "brand": "Samsung",
+    "category": "Mobiles",
+    "price": 74999,
+    "quantity": 25,
     "rating": 4.7,
+    "description": "AI-powered Samsung flagship smartphone.",
+    "imageUrl": "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf"
+  },
+  {
+    "name": "Samsung Galaxy S24 Ultra",
+    "brand": "Samsung",
+    "category": "Mobiles",
+    "price": 129999,
+    "quantity": 10,
+    "rating": 4.9,
+    "description": "Samsung flagship with S-Pen and 200MP camera.",
+    "imageUrl": "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c"
+  },
+  {
+    "name": "OnePlus 13",
+    "brand": "OnePlus",
+    "category": "Mobiles",
+    "price": 69999,
+    "quantity": 18,
+    "rating": 4.8,
+    "description": "Flagship OnePlus smartphone with smooth performance.",
+    "imageUrl": "https://images.unsplash.com/photo-1598327105666-5b89351aff97"
+  },
+  {
+    "name": "OnePlus Nord CE 4",
+    "brand": "OnePlus",
+    "category": "Mobiles",
+    "price": 24999,
+    "quantity": 30,
+    "rating": 4.5,
+    "description": "Affordable OnePlus smartphone with fast charging.",
+    "imageUrl": "https://images.unsplash.com/photo-1580910051074-3eb694886505"
+  },
+  {
+    "name": "Redmi Note 14 Pro",
+    "brand": "Xiaomi",
+    "category": "Mobiles",
+    "price": 27999,
+    "quantity": 35,
+    "rating": 4.4,
+    "description": "Powerful Redmi smartphone with AMOLED display.",
+    "imageUrl": "https://images.unsplash.com/photo-1592750475338-74b7b21085ab"
+  },
+  {
+    "name": "Nothing Phone 3",
+    "brand": "Nothing",
+    "category": "Mobiles",
+    "price": 45999,
+    "quantity": 12,
+    "rating": 4.6,
+    "description": "Transparent design smartphone with Glyph interface.",
+    "imageUrl": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9"
+  },
+  {
+    "name": "Google Pixel 9",
+    "brand": "Google",
+    "category": "Mobiles",
+    "price": 84999,
+    "quantity": 8,
+    "rating": 4.8,
+    "description": "Google Pixel with excellent camera quality.",
+    "imageUrl": "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd"
+  },
+  {
+    "name": "Realme GT 7",
+    "brand": "Realme",
+    "category": "Mobiles",
+    "price": 39999,
+    "quantity": 22,
+    "rating": 4.5,
+    "description": "Gaming-focused smartphone with flagship performance.",
+    "imageUrl": "https://images.unsplash.com/photo-1605236453806-6ff36851218e"
+  }
+  ,
+  {
+    "name": "Apple MacBook Pro M4",
+    "brand": "Apple",
+    "category": "Laptops",
+    "price": 189999,
+    "quantity": 8,
+    "rating": 5.0,
+    "description": "Professional laptop with M4 Pro chip.",
+    "imageUrl": "https://images.unsplash.com/photo-1496181133206-80ce9b88a853"
+  },
+  {
+    "name": "Dell Inspiron 15",
+    "brand": "Dell",
+    "category": "Laptops",
+    "price": 62999,
+    "quantity": 20,
+    "rating": 4.5,
+    "description": "Dell Inspiron laptop for students and professionals.",
+    "imageUrl": "https://images.unsplash.com/photo-1496181133206-80ce9b88a853"
+  },
+  {
+    "name": "Dell XPS 13",
+    "brand": "Dell",
+    "category": "Laptops",
+    "price": 129999,
+    "quantity": 10,
+    "rating": 4.8,
+    "description": "Premium ultrabook with InfinityEdge display.",
+    "imageUrl": "https://images.unsplash.com/photo-1484788984921-03950022c9ef"
+  },
+  {
+    "name": "HP Pavilion 15",
+    "brand": "HP",
+    "category": "Laptops",
+    "price": 58999,
+    "quantity": 15,
+    "rating": 4.4,
+    "description": "Reliable HP Pavilion laptop.",
+    "imageUrl": "https://images.unsplash.com/photo-1484788984921-03950022c9ef"
+  },
+  {
+    "name": "HP Victus Gaming",
+    "brand": "HP",
+    "category": "Laptops",
+    "price": 84999,
+    "quantity": 10,
+    "rating": 4.6,
+    "description": "Gaming laptop with dedicated graphics.",
+    "imageUrl": "https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2"
+  },
+  {
+    "name": "Lenovo IdeaPad Slim 5",
+    "brand": "Lenovo",
+    "category": "Laptops",
+    "price": 67999,
+    "quantity": 18,
+    "rating": 4.5,
+    "description": "Slim and lightweight laptop for productivity.",
+    "imageUrl": "https://images.unsplash.com/photo-1515879218367-8466d910aaa4"
+  },
+  {
+    "name": "Lenovo Legion 5",
+    "brand": "Lenovo",
+    "category": "Laptops",
+    "price": 99999,
+    "quantity": 8,
+    "rating": 4.8,
+    "description": "High-performance gaming laptop.",
+    "imageUrl": "https://images.unsplash.com/photo-1593642702821-c8da6771f0c6"
+  },
+  {
+    "name": "ASUS Vivobook 15",
+    "brand": "ASUS",
+    "category": "Laptops",
+    "price": 54999,
+    "quantity": 16,
+    "rating": 4.4,
+    "description": "Affordable laptop with modern design.",
+    "imageUrl": "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed"
+  },
+  {
+    "name": "Acer Aspire 7",
+    "brand": "Acer",
+    "category": "Laptops",
+    "price": 64999,
+    "quantity": 14,
+    "rating": 4.5,
+    "description": "Powerful laptop for work and gaming.",
+    "imageUrl": "https://images.unsplash.com/photo-1593642634443-44adaa06623a"
+  }
+  ,
+  {
+    "name": "Sony WH-CH720N",
+    "brand": "Sony",
+    "category": "Electronics",
+    "price": 9999,
+    "quantity": 30,
+    "rating": 4.7,
+    "description": "Wireless noise cancelling headphones.",
+    "imageUrl": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e"
+  },
+  {
+    "name": "JBL Tune 770NC",
+    "brand": "JBL",
+    "category": "Electronics",
+    "price": 8999,
+    "quantity": 25,
+    "rating": 4.6,
+    "description": "Wireless over-ear headphones with ANC.",
+    "imageUrl": "https://images.unsplash.com/photo-1484704849700-f032a568e944"
+  },
+  {
+    "name": "Boat Rockerz 550",
+    "brand": "Boat",
+    "category": "Electronics",
+    "price": 2499,
     "quantity": 40,
-    "imageUrl": "https://example.com/galaxys24.jpg"
+    "rating": 4.4,
+    "description": "Bluetooth wireless headphones.",
+    "imageUrl": "https://images.unsplash.com/photo-1546435770-a3e426bf472b"
+  },
+  {
+    "name": "JBL Flip 6",
+    "brand": "JBL",
+    "category": "Electronics",
+    "price": 11999,
+    "quantity": 15,
+    "rating": 4.8,
+    "description": "Portable Bluetooth speaker.",
+    "imageUrl": "https://images.unsplash.com/photo-1545454675-3531b543be5d"
+  },
+  {
+    "name": "Boat Stone 650",
+    "brand": "Boat",
+    "category": "Electronics",
+    "price": 2999,
+    "quantity": 35,
+    "rating": 4.3,
+    "description": "Portable waterproof speaker.",
+    "imageUrl": "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1"
+  },
+  {
+    "name": "Apple Watch Series 10",
+    "brand": "Apple",
+    "category": "Electronics",
+    "price": 49999,
+    "quantity": 10,
+    "rating": 4.9,
+    "description": "Advanced smartwatch with health tracking.",
+    "imageUrl": "https://images.unsplash.com/photo-1434494878577-86c23bcb06b9"
+  },
+  {
+    "name": "Samsung Galaxy Watch 7",
+    "brand": "Samsung",
+    "category": "Electronics",
+    "price": 29999,
+    "quantity": 12,
+    "rating": 4.7,
+    "description": "Smartwatch with fitness and health monitoring.",
+    "imageUrl": "https://images.unsplash.com/photo-1523275335684-37898b6baf30"
+  },
+  {
+    "name": "Noise ColorFit Pro 6",
+    "brand": "Noise",
+    "category": "Electronics",
+    "price": 3999,
+    "quantity": 50,
+    "rating": 4.3,
+    "description": "Affordable smartwatch with AMOLED display.",
+    "imageUrl": "https://images.unsplash.com/photo-1579586337278-3befd40fd17a"
+  },
+ 
+  {
+    "name": "Logitech Wireless Mouse",
+    "brand": "Logitech",
+    "category": "Electronics",
+    "price": 1499,
+    "quantity": 70,
+    "rating": 4.6,
+    "description": "Ergonomic wireless mouse for daily use.",
+    "imageUrl": "https://images.unsplash.com/photo-1527814050087-3793815479db"
+  }
+  ,
+  {
+    "name": "Levi's Men's Jeans",
+    "brand": "Levi's",
+    "category": "Fashion",
+    "price": 2499,
+    "quantity": 40,
+    "rating": 4.5,
+    "description": "Comfort fit blue denim jeans for men.",
+    "imageUrl": "https://images.unsplash.com/photo-1541099649105-f69ad21f3246"
+  },
+  {
+    "name": "Nike Air Max",
+    "brand": "Nike",
+    "category": "Fashion",
+    "price": 7999,
+    "quantity": 25,
+    "rating": 4.8,
+    "description": "Premium running shoes with Air cushioning.",
+    "imageUrl": "https://images.unsplash.com/photo-1542291026-7eec264c27ff"
+  },
+  {
+    "name": "Adidas Sports T-Shirt",
+    "brand": "Adidas",
+    "category": "Fashion",
+    "price": 1499,
+    "quantity": 60,
+    "rating": 4.4,
+    "description": "Comfortable sports t-shirt for daily wear.",
+    "imageUrl": "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab"
+  },
+  {
+    "name": "Puma Running Shoes",
+    "brand": "Puma",
+    "category": "Fashion",
+    "price": 4999,
+    "quantity": 30,
+    "rating": 4.6,
+    "description": "Lightweight running shoes for athletes.",
+    "imageUrl": "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519"
+  },
+  {
+    "name": "US Polo Shirt",
+    "brand": "US Polo",
+    "category": "Fashion",
+    "price": 1999,
+    "quantity": 50,
+    "rating": 4.4,
+    "description": "Classic polo t-shirt with premium fabric.",
+    "imageUrl": "https://images.unsplash.com/photo-1581655353564-df123a1eb820"
+  },
+  {
+    "name": "Allen Solly Formal Shirt",
+    "brand": "Allen Solly",
+    "category": "Fashion",
+    "price": 1799,
+    "quantity": 45,
+    "rating": 4.5,
+    "description": "Formal shirt suitable for office wear.",
+    "imageUrl": "https://images.unsplash.com/photo-1603252109303-2751441dd157"
+  },
+  {
+    "name": "Peter England Trousers",
+    "brand": "Peter England",
+    "category": "Fashion",
+    "price": 2299,
+    "quantity": 35,
+    "rating": 4.3,
+    "description": "Premium formal trousers for men.",
+    "imageUrl": "https://images.unsplash.com/photo-1473966968600-fa801b869a1a"
+  },
+  {
+    "name": "Woodland Casual Shoes",
+    "brand": "Woodland",
+    "category": "Fashion",
+    "price": 3499,
+    "quantity": 20,
+    "rating": 4.5,
+    "description": "Durable casual shoes for outdoor use.",
+    "imageUrl": "https://images.unsplash.com/photo-1549298916-b41d501d3772"
+  },
+  {
+    "name": "Fastrack Sunglasses",
+    "brand": "Fastrack",
+    "category": "Fashion",
+    "price": 1299,
+    "quantity": 70,
+    "rating": 4.2,
+    "description": "Stylish UV-protected sunglasses.",
+    "imageUrl": "https://images.unsplash.com/photo-1511499767150-a48a237f0083"
+  },
+  {
+    "name": "Tommy Hilfiger Hoodie",
+    "brand": "Tommy Hilfiger",
+    "category": "Fashion",
+    "price": 3999,
+    "quantity": 25,
+    "rating": 4.7,
+    "description": "Premium cotton hoodie with modern design.",
+    "imageUrl": "https://images.unsplash.com/photo-1556821840-3a63f95609a7"
+  }
+  ,
+  {
+    "name": "Atomic Habits",
+    "brand": "James Clear",
+    "category": "Books",
+    "price": 499,
+    "quantity": 50,
+    "rating": 4.9,
+    "description": "Build good habits and break bad ones.",
+    "imageUrl": "https://images.unsplash.com/photo-1544947950-fa07a98d237f"
+  },
+  {
+    "name": "Rich Dad Poor Dad",
+    "brand": "Robert Kiyosaki",
+    "category": "Books",
+    "price": 399,
+    "quantity": 45,
+    "rating": 4.8,
+    "description": "Personal finance and wealth building book.",
+    "imageUrl": "https://images.unsplash.com/photo-1512820790803-83ca734da794"
+  },
+  {
+    "name": "The Psychology of Money",
+    "brand": "Morgan Housel",
+    "category": "Books",
+    "price": 450,
+    "quantity": 40,
+    "rating": 4.8,
+    "description": "Timeless lessons on wealth and behavior.",
+    "imageUrl": "https://images.unsplash.com/photo-1516979187457-637abb4f9353"
+  },
+  {
+    "name": "Think and Grow Rich",
+    "brand": "Napoleon Hill",
+    "category": "Books",
+    "price": 350,
+    "quantity": 35,
+    "rating": 4.7,
+    "description": "Classic success and mindset book.",
+    "imageUrl": "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f"
+  },
+  {
+    "name": "Deep Work",
+    "brand": "Cal Newport",
+    "category": "Books",
+    "price": 499,
+    "quantity": 30,
+    "rating": 4.7,
+    "description": "Rules for focused success in a distracted world.",
+    "imageUrl": "https://images.unsplash.com/photo-1519682337058-a94d519337bc"
+  },
+  {
+    "name": "Clean Code",
+    "brand": "Robert C. Martin",
+    "category": "Books",
+    "price": 899,
+    "quantity": 20,
+    "rating": 4.9,
+    "description": "Essential book for software developers.",
+    "imageUrl": "https://images.unsplash.com/photo-1532012197267-da84d127e765"
+  },
+  {
+    "name": "The Alchemist",
+    "brand": "Paulo Coelho",
+    "category": "Books",
+    "price": 299,
+    "quantity": 50,
+    "rating": 4.8,
+    "description": "A novel about following your dreams.",
+    "imageUrl": "https://images.unsplash.com/photo-1512820790803-83ca734da794"
+  },
+  {
+    "name": "Ikigai",
+    "brand": "Hector Garcia",
+    "category": "Books",
+    "price": 399,
+    "quantity": 40,
+    "rating": 4.7,
+    "description": "Japanese secret to a long and happy life.",
+    "imageUrl": "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c"
+  },
+  {
+    "name": "The 7 Habits of Highly Effective People",
+    "brand": "Stephen Covey",
+    "category": "Books",
+    "price": 599,
+    "quantity": 30,
+    "rating": 4.8,
+    "description": "Personal and professional effectiveness guide.",
+    "imageUrl": "https://images.unsplash.com/photo-1524578271613-d550eacf6090"
+  },
+  {
+    "name": "Zero To One",
+    "brand": "Peter Thiel",
+    "category": "Books",
+    "price": 449,
+    "quantity": 25,
+    "rating": 4.6,
+    "description": "Notes on startups and building the future.",
+    "imageUrl": "https://images.unsplash.com/photo-1495446815901-a7297e633e8d"
   }
 ]
+
+

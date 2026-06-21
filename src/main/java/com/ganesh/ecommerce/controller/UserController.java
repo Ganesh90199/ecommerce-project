@@ -19,9 +19,29 @@ public class UserController {
 
     // ✅ REGISTER
     @PostMapping("/auth/register")
-    public ResponseEntity<?> register(@RequestBody User user) {
-        String msg = userService.register(user);
-        return ResponseEntity.ok(Map.of("message", msg));
+    public ResponseEntity<?> register(
+            @RequestBody User user) {
+
+        try {
+
+            String msg =
+                userService.register(user);
+
+            return ResponseEntity.ok(
+                Map.of("message", msg)
+            );
+
+        } catch (Exception e) {
+
+            return ResponseEntity
+                    .badRequest()
+                    .body(
+                        Map.of(
+                            "message",
+                            e.getMessage()
+                        )
+                    );
+        }
     }
 
     // ✅ LOGIN (FIXED)
