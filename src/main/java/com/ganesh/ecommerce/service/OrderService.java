@@ -24,285 +24,222 @@ import com.ganesh.ecommerce.repository.UserRepository;
 @Service
 public class OrderService {
 
-    @Autowired
-    private OrderRepository orderRepository;
+	@Autowired
+	private OrderRepository orderRepository;
 
-    @Autowired
-    private OrderItemRepository orderItemRepository;
+	@Autowired
+	private OrderItemRepository orderItemRepository;
 
-    @Autowired
-    private CartRepository cartRepository;
+	@Autowired
+	private CartRepository cartRepository;
 
-    @Autowired
-    private ProductRepository productRepository;
+	@Autowired
+	private ProductRepository productRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+	@Autowired
+	private UserRepository userRepository;
 
-    public Order placeOrder(Order order) {
+	public Order placeOrder(Order order) {
 
-        order.setStatus("PLACED");
-        order.setOrderDate(
-                LocalDateTime.now().toString()
-        );
+		order.setStatus("PLACED");
+		order.setOrderDate(LocalDateTime.now().toString());
 
-        Order savedOrder =
-                orderRepository.save(order);
+		Order savedOrder = orderRepository.save(order);
 
-        List<Cart> cartItems =
-                cartRepository.findByUserId(
-                        order.getUserId()
-                );
+		List<Cart> cartItems = cartRepository.findByUserId(order.getUserId());
 
-        double totalAmount = 0;
+		double totalAmount = 0;
 
-        for (Cart cart : cartItems) {
+		for (Cart cart : cartItems) {
 
-        	System.out.println(
-        	        "Cart Product ID = "
-        	        + cart.getProductId()
-        	);
+			Product product = productRepository.findById(cart.getProductId()).orElse(null);
 
-        	Product product =
-        		    productRepository.findById(
-        		        cart.getProductId()
-        		    ).orElse(null);
+			if (product == null) {
 
-        		if(product == null){
+				cartRepository.delete(cart);
 
-        		    cartRepository.delete(cart);
+				continue;
+			}
+			if (product.getQuantity() < cart.getQuantity()) {
+				throw new RuntimeException(product.getName() + " is out of stock");
+			}
 
-        		    continue;
-        		}
-            if (
-                    product.getQuantity()
-                    < cart.getQuantity()
-            ) {
-                throw new RuntimeException(
-                        product.getName()
-                                + " is out of stock"
-                );
-            }
+			OrderItem item = new OrderItem();
 
-            OrderItem item =
-                    new OrderItem();
+			item.setOrderId(savedOrder.getId());
 
-            item.setOrderId(
-                    savedOrder.getId()
-            );
+			item.setProductId(product.getId());
 
-            item.setProductId(
-                    product.getId()
-            );
+			item.setProductName(product.getName());
 
-            item.setProductName(
-                    product.getName()
-            );
+			item.setQuantity(cart.getQuantity());
 
-            item.setQuantity(
-                    cart.getQuantity()
-            );
+			item.setPrice(product.getPrice());
 
-            item.setPrice(
-                    product.getPrice()
-            );
+			orderItemRepository.save(item);
 
-            orderItemRepository.save(item);
+			product.setQuantity(product.getQuantity() - cart.getQuantity());
 
-            product.setQuantity(
-                    product.getQuantity()
-                            - cart.getQuantity()
-            );
+			productRepository.save(product);
 
-            productRepository.save(product);
+			totalAmount += product.getPrice() * cart.getQuantity();
+		}
 
-            totalAmount +=
-                    product.getPrice()
-                            * cart.getQuantity();
-        }
+		savedOrder.setTotalAmount(totalAmount);
 
-        savedOrder.setTotalAmount(
-                totalAmount
-        );
+		savedOrder = orderRepository.save(savedOrder);
 
-        savedOrder =
-                orderRepository.save(savedOrder);
+		cartRepository.deleteAll(cartItems);
 
-        cartRepository.deleteAll(
-                cartItems
-        );
+		return savedOrder;
+	}
 
-        return savedOrder;
-    }
+	public List<OrderResponseDTO> getOrdersByUser(int userId) {
 
-    public List<OrderResponseDTO> getOrdersByUser(
-            int userId) {
+		List<Order> orders = orderRepository.findByUserIdOrderByIdDesc(userId);
 
-        List<Order> orders =
-                orderRepository.findByUserIdOrderByIdDesc(
-                        userId
-                );
+		List<OrderResponseDTO> response = new ArrayList<>();
 
-        List<OrderResponseDTO> response =
-                new ArrayList<>();
+		for (Order order : orders) {
 
-        for (Order order : orders) {
+			OrderResponseDTO dto = new OrderResponseDTO();
 
-            OrderResponseDTO dto =
-                    new OrderResponseDTO();
+			dto.setId(order.getId());
+			dto.setStatus(order.getStatus());
+			dto.setTotalAmount(order.getTotalAmount());
+			dto.setOrderDate(order.getOrderDate());
 
-            dto.setId(order.getId());
-            dto.setStatus(order.getStatus());
-            dto.setTotalAmount(order.getTotalAmount());
-            dto.setOrderDate(order.getOrderDate());
+			dto.setCustomerName(order.getCustomerName());
 
-            dto.setCustomerName(
-                    order.getCustomerName()
-            );
+			dto.setMobile(order.getMobile());
 
-            dto.setMobile(
-                    order.getMobile()
-            );
+			dto.setAddress(order.getAddress());
 
-            dto.setAddress(
-                    order.getAddress()
-            );
+			dto.setCity(order.getCity());
 
-            dto.setCity(
-                    order.getCity()
-            );
+			dto.setPincode(order.getPincode());
 
-            dto.setPincode(
-                    order.getPincode()
-            );
+			List<OrderItem> orderItems = orderItemRepository.findByOrderId(order.getId());
 
-            List<OrderItem> orderItems =
-                    orderItemRepository.findByOrderId(
-                            order.getId()
-                    );
+			List<OrderItemDTO> itemDtos = new ArrayList<>();
 
-            List<OrderItemDTO> itemDtos =
-                    new ArrayList<>();
+			for (OrderItem item : orderItems) {
 
-            for (OrderItem item : orderItems) {
+				OrderItemDTO itemDto = new OrderItemDTO();
 
-                OrderItemDTO itemDto =
-                        new OrderItemDTO();
+				itemDto.setProductName(item.getProductName());
 
-                itemDto.setProductName(
-                        item.getProductName()
-                );
+				itemDto.setQuantity(item.getQuantity());
 
-                itemDto.setQuantity(
-                        item.getQuantity()
-                );
+				itemDto.setPrice(item.getPrice());
 
-                itemDto.setPrice(
-                        item.getPrice()
-                );
+				itemDtos.add(itemDto);
+			}
 
-                itemDtos.add(itemDto);
-            }
+			dto.setItems(itemDtos);
 
-            dto.setItems(itemDtos);
+			response.add(dto);
+		}
 
-            response.add(dto);
-        }
+		return response;
+	}
 
-        return response;
-    }
+	public Order cancelOrder(int orderId) {
 
-    public Order cancelOrder(
-            int orderId
-    ) {
+		Order order = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found"));
 
-        Order order =
-                orderRepository.findById(orderId)
-                        .orElseThrow(
-                                () -> new RuntimeException(
-                                        "Order not found"
-                                )
-                        );
+		if (!order.getStatus().equals("PLACED")) {
 
-        if (
-                order.getStatus()
-                        .equals("DELIVERED")
-        ) {
+			throw new RuntimeException("Only placed orders can be cancelled");
+		}
 
-            throw new RuntimeException(
-                    "Delivered order cannot be cancelled"
-            );
-        }
+		restoreStock(order.getId());
 
-        order.setStatus("CANCELLED");
+		order.setStatus("CANCELLED");
 
-        return orderRepository.save(order);
-    }
+		return orderRepository.save(order);
+	}
 
-    public List<Order> getAllOrders() {
+	public List<Order> getAllOrders() {
 
-        return orderRepository.findAll();
-    }
+		return orderRepository.findAll();
+	}
 
-    public Order updateOrderStatus(
-            int orderId,
-            String status
-    ) {
+	public Order updateOrderStatus(int orderId, String status) {
 
-        Order order =
-                orderRepository.findById(orderId)
-                        .orElseThrow(
-                                () -> new RuntimeException(
-                                        "Order not found"
-                                )
-                        );
+		Order order = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found"));
 
-        order.setStatus(status);
+		String currentStatus = order.getStatus();
 
-        return orderRepository.save(order);
-    }
+		if ("PLACED".equals(currentStatus)) {
 
-    public DashboardResponseDTO getDashboardData() {
+			if (!status.equals("SHIPPED") && !status.equals("CANCELLED")) {
 
-        DashboardResponseDTO dto =
-                new DashboardResponseDTO();
+				throw new RuntimeException("PLACED order can only be SHIPPED or CANCELLED");
+			}
+		}
 
-        dto.setTotalProducts(
-                productRepository.count()
-        );
+		else if ("SHIPPED".equals(currentStatus)) {
 
-        dto.setTotalOrders(
-                orderRepository.count()
-        );
+			if (!status.equals("DELIVERED")) {
 
-        dto.setTotalUsers(
-                userRepository.count()
-        );
+				throw new RuntimeException("SHIPPED order can only be DELIVERED");
+			}
+		}
 
-        dto.setTotalRevenue(
-                orderRepository.getTotalRevenue()
-        );
+		else {
 
-        dto.setLowStockProducts(
-                productRepository.countByQuantityBetween(
-                        1,
-                        10
-                )
-        );
+			throw new RuntimeException("Order status cannot be changed");
+		}
 
-        dto.setOutOfStockProducts(
-                productRepository.countByQuantity(
-                        0
-                )
-        );
+		if ("CANCELLED".equals(status) && "PLACED".equals(currentStatus)) {
 
-        return dto;
-    }
+			restoreStock(order.getId());
+		}
 
-    public List<OrderStatusCountDTO>
-    getOrderStatusCounts() {
+		order.setStatus(status);
 
-        return orderRepository
-				.getOrderStatusCounts();
+		return orderRepository.save(order);
+	}
+
+	private void restoreStock(int orderId) {
+
+		List<OrderItem> orderItems = orderItemRepository.findByOrderId(orderId);
+
+		for (OrderItem item : orderItems) {
+
+			Product product = productRepository.findById(item.getProductId()).orElse(null);
+
+			if (product != null) {
+
+				product.setQuantity(product.getQuantity() + item.getQuantity());
+
+				productRepository.save(product);
+			}
+		}
+	}
+
+	public DashboardResponseDTO getDashboardData() {
+
+		DashboardResponseDTO dto = new DashboardResponseDTO();
+
+		dto.setTotalProducts(productRepository.count());
+
+		dto.setTotalOrders(orderRepository.count());
+
+		dto.setTotalUsers(userRepository.count());
+
+		dto.setTotalRevenue(orderRepository.getTotalRevenue());
+
+		dto.setLowStockProducts(productRepository.countByQuantityBetween(1, 10));
+
+		dto.setOutOfStockProducts(productRepository.countByQuantity(0));
+
+		return dto;
+	}
+
+	public List<OrderStatusCountDTO> getOrderStatusCounts() {
+
+		return orderRepository.getOrderStatusCounts();
 	}
 }
